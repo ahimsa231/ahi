@@ -1,0 +1,117 @@
+create a replace procedure avgmarks is
+cursor c_iamarks is
+select greatest(test1,test2) as a,greatest(test1,test3) as b,greatest(test3,test2) as c
+from iamarks  
+where finalia is null for update;
+c_a number;
+c_b number;
+c_c number;
+c_sm number;
+c_av number;
+begin
+open c_iamarks;
+loop
+fetch c_iamarks into c_a,c_b,c_c;
+exit when c_iamarks%notfound;
+if(c_a!=c_b) then
+c_sm:=c_a+c_b;
+else
+c_sm:=c_a+c_c;
+end if;
+c_av:=c_sm/2;
+update iamarks set finalia=c_av
+where current of c_iamarks;
+end loop;
+close c_iamarks;
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SQL> create or replace procedure avgmarks is
+  2  cursor c_iamarks is
+  3  select greatest(test1,test2) as a,greatest(test1,test3) as b,greatest(test3,test2) as c
+  4  from iamarks
+  5  where finalia is null for update;
+  6  c_a number;
+  7  c_b number;
+  8  c_c number;
+  9  c_sm number;
+ 10  c_av number;
+ 11  begin
+ 12  open c_iamarks;
+ 13  loop
+ 14  fetch c_iamarks into c_a,c_b,c_c;
+ 15  exit when c_iamarks%notfound;
+ 16  if(c_a!=c_b) then
+ 17  c_sm:=c_a+c_b;
+ 18  else
+ 19  c_sm:=c_a+c_c;
+ 20  end if;
+ 21  c_av:c_sm/2;
+ 22  update iamarks set finalia=c_av where current of c_iamarks;
+ 23  end loop;
+ 24  close c_iamarks;
+ 25  end;
+ 26  /
+
+-----------------------------------------------------------------------------------------------------------------
+
+select s.usn,s.sname,s.address,s.phone,s.gender
+(case
+when ia.finalia between 17 and 20 then 'outstanding'
+when ia.finalia between 12 and 16 then 'average'
+else 'weak'
+end) as cat 
+from student s, semsec ss,iamarks ia,subject sub
+where s.usn=ia.usn
+and ss.ssid=ia.ssid
+and sub.subcode=ia.subcode
+and sub.sem=8;
+
+create or replace procedure avgmarks is
+  cursor c_iamarks is
+  select greatest(test1,test2)as a,
+  greatest(test1,test3)as b,greatest (test3,test2) as c
+  from iamarks
+  where finalia is null for update;
+c_a number;
+c_b number;
+c_c number;
+c_sm number;
+c_av number;
+begin 
+open c_iamarks;
+loop
+fetch c_iamarks into c_a,c_b,c_c;
+exit when c_iamarks%notfound;
+if(c_a!=c_b) then
+c_sm:=c_a+c_b;
+else
+c_sm:=c_a+c_c;
+end if;
+c_av:=c_sm/2;
+update iamarks set finalia=c_av
+where current of c_iamarks;
+end loop;
+close c_iamarks;
+end;
+/
+
+
+    begin
+    avgmarks;
+    end;
+    /
